@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 
 export class PaginaLogin {
     readonly page: Page;
@@ -9,24 +9,28 @@ export class PaginaLogin {
     readonly botonIniciarSesion: Locator;
     readonly enlaceOlvideContrasena: Locator;
     readonly enlaceRegistrarse: Locator;
+    readonly toastError: Locator;
 
     constructor(page: Page) {
         this.page = page;
 
         // Elementos principales
         this.logo = page.locator('img[alt="WorkFlow Energy Logo"]');
-        this.titulo = page.getByText("Inicia sesión en tu cuenta");
+        this.titulo = page.locator("p", { hasText: "Inicia sesión en tu cuenta" });
 
         // Campos del formulario
-        this.inputCorreo = page.locator('input[name="email"]');
-        this.inputContrasena = page.locator('input[name="password"]');
+        this.inputCorreo = page.locator('input#email[name="email"]');
+        this.inputContrasena = page.locator('input#password[name="password"]');
 
         // Botones y enlaces
-        this.botonIniciarSesion = page.getByRole("button", { name: "Iniciar Sesión" });
+        this.botonIniciarSesion = page.getByRole("button", { name: /^Iniciar Sesión$/i });
         this.enlaceOlvideContrasena = page.getByRole("link", { name: "¿Olvidaste tu contraseña?" });
         this.enlaceRegistrarse = page.getByRole("link", {
             name: "¿No tienes cuenta? Registrarse aquí",
         });
+
+        // Notificaciones o errores tipo "toast"
+        this.toastError = page.locator('div[role="status"][aria-live="polite"]');
     }
 
     /**
@@ -78,5 +82,24 @@ export class PaginaLogin {
             this.enlaceOlvideContrasena,
             this.enlaceRegistrarse,
         ];
+    }
+
+    /**
+     * Espera y valida que aparezca un mensaje de error (toast)
+     */
+    async esperarMensajeError(textoEsperado?: string) {
+        const toast = this.toastError;
+        await expect(toast).toBeVisible({ timeout: 5000 });
+
+        if (textoEsperado) {
+            await expect(toast).toContainText(textoEsperado, { timeout: 5000 });
+        }
+    }
+
+    /**
+     * Retorna el texto actual del mensaje de error (útil para asserts personalizados)
+     */
+    async obtenerTextoError(): Promise<string> {
+        return (await this.toastError.textContent()) || "";
     }
 }

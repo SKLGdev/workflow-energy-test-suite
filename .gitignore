@@ -8,3 +8,10 @@ node_modules/
 /playwright/.auth/
 ESTRUCTURA.md
 .env
+
+# Auth
+tests/e2e/auth/noAuth.json/
+tests/e2e/auth/adminAuth.json/
+tests/e2e/auth/supervisorAuth.json/
+tests/e2e/auth/jefeAuth.json/
+tests/e2e/auth/empleadoAuth.json/
