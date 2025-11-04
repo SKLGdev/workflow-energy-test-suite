@@ -10,7 +10,16 @@ test.describe("Casos negativos - Login de WorkFlow Energy", () => {
 
         await login.iniciarSesion();
 
-        await login.esperarMensajeError("Request failed with status code 400");
+        await expect(page).toHaveURL(/\/login$/);
+
+        const correoInput = login.inputCorreo;
+        const contrasenaInput = login.inputContrasena;
+
+        const correoEsValido = await correoInput.evaluate((el: HTMLInputElement) => el.validity.valid);
+        const contrasenaEsValida = await contrasenaInput.evaluate((el: HTMLInputElement) => el.validity.valid);
+
+        expect(correoEsValido).toBeFalsy();
+        expect(contrasenaEsValida).toBeFalsy();
     });
 
     test("No debería permitir iniciar sesión con correo inválido", async ({ page }) => {
@@ -32,7 +41,12 @@ test.describe("Casos negativos - Login de WorkFlow Energy", () => {
         await login.completarFormulario("pepe@gmail.com", "");
         await login.iniciarSesion();
 
-        await login.esperarMensajeError("Request failed with status code 400");
+        await expect(page).toHaveURL(/\/login$/);
+
+        const contrasenaInput = login.inputContrasena;
+        const contrasenaEsValida = await contrasenaInput.evaluate((el: HTMLInputElement) => el.validity.valid);
+        
+        expect(contrasenaEsValida).toBeFalsy();
     });
 
     test("No debería permitir iniciar sesión con credenciales incorrectas", async ({ page }) => {

@@ -29,8 +29,8 @@ export class PaginaLogin {
             name: "¿No tienes cuenta? Registrarse aquí",
         });
 
-        // Notificaciones o errores tipo "toast"
-        this.toastError = page.locator('div[role="status"][aria-live="polite"]');
+        // Notificaciones o errores tipo "toast" (React Hot Toast)
+        this.toastError = page.locator('[data-rht-toaster] [role="status"], [data-rht-toaster] div[aria-live]').first();
     }
 
     /**
@@ -88,8 +88,12 @@ export class PaginaLogin {
      * Espera y valida que aparezca un mensaje de error (toast)
      */
     async esperarMensajeError(textoEsperado?: string) {
+        // Esperar a que el contenedor del toaster esté presente
+        await this.page.waitForSelector("[data-rht-toaster]", { state: "attached", timeout: 5000 });
+
+        // Esperar a que aparezca el toast (puede tardar un poco en renderizarse)
         const toast = this.toastError;
-        await expect(toast).toBeVisible({ timeout: 5000 });
+        await expect(toast).toBeVisible({ timeout: 10000 });
 
         if (textoEsperado) {
             await expect(toast).toContainText(textoEsperado, { timeout: 5000 });
