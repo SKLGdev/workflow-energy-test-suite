@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page } from "@playwright/test";
 
 export class PaginaPrincipal {
     readonly page: Page;
@@ -20,10 +20,10 @@ export class PaginaPrincipal {
         this.subtitulo = page.locator('h5:has-text("Sistema de Gestión de Órdenes")');
 
         // Botones principales
-        this.botonIniciarSesion = page.getByRole('button', { name: 'Iniciar Sesión' });
-        this.botonRegistrarse = page.getByRole('button', { name: 'Registrarse' });
-        this.botonComenzarAhora = page.getByRole('button', { name: 'Comenzar Ahora' });
-        this.botonYaTengoCuenta = page.getByRole('button', { name: 'Ya tengo cuenta' });
+        this.botonIniciarSesion = page.getByRole("button", { name: "Iniciar Sesión" });
+        this.botonRegistrarse = page.getByRole("button", { name: "Registrarse" });
+        this.botonComenzarAhora = page.getByRole("button", { name: "Comenzar Ahora" });
+        this.botonYaTengoCuenta = page.getByRole("button", { name: "Ya tengo cuenta" });
 
         // Secciones informativas
         this.seccionCaracteristicas = page.locator('h3:has-text("Características Principales")');
@@ -31,11 +31,11 @@ export class PaginaPrincipal {
         this.seccionMultiplataforma = page.locator('h3:has-text("Sistema Multiplataforma")');
     }
 
-    /** 
-     * Navega a la página principal 
+    /**
+     * Navega a la página principal
      */
     async ir() {
-        await this.page.goto('/');
+        await this.page.goto("/");
     }
 
     /**
@@ -77,7 +77,7 @@ export class PaginaPrincipal {
             this.botonRegistrarse,
             this.seccionCaracteristicas,
             this.seccionRoles,
-            this.seccionMultiplataforma
+            this.seccionMultiplataforma,
         ];
     }
 }

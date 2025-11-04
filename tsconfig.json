@@ -9,7 +9,5 @@
         "skipLibCheck": true,
         "noEmit": true
     },
-    "include": [
-        "tests"
-    ]
+    "include": ["tests"]
 }
