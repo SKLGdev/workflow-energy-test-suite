@@ -3,13 +3,34 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:slow": "npx playwright test --slow-mo 500",
+    "test:report": "npx playwright show-report",
+    "test:mobile": "npx playwright test --project='Mobile Chrome'",
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:webkit": "npx playwright test --project=webkit",
+    "test:grep": "npx playwright test --grep '@regresion'",
+    "test:tag": "npx playwright test --grep '@smoke' --project=chromium",
+    "update:snapshots": "npx playwright test --update-snapshots",
+    "open:report": "npx playwright show-report",
+    "generate:report": "npx playwright test && npx playwright show-report",
+    "lint": "eslint tests/**/*.ts --fix",
+    "globalSetup": "./tests/e2e/utils/global-setup.ts",
+    "globalTeardown": "./tests/e2e/utils/global-teardown.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@playwright/test": "^1.56.1",
-    "@types/node": "^24.10.0"
+    "@types/node": "^24.10.0",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.9.3"
   }
 }
