@@ -2,27 +2,7 @@ import { test, expect } from "@playwright/test";
 import { DashboardPage } from "../../pages/dashboard.page.js";
 
 test.describe("Dashboard Page", () => {
-    const roles = [
-        { rol: "admin", authFile: "adminAuth.json", expectedName: "Ana Administradora" },
-        { rol: "supervisor", authFile: "supervisorAuth.json", expectedName: "Carlos Gerente" },
-        { rol: "jefe", authFile: "jefeAuth.json", expectedName: "María Líder" },
-        { rol: "empleado", authFile: "empleadoAuth.json", expectedName: "Juan Pérez" },
-    ];
-
-    for (const { rol, authFile, expectedName } of roles) {
-        test.describe(`Rol ${rol}`, () => {
-            test.use({ storageState: `tests/e2e/auth/${authFile}` });
-
-            test(`Validar que el dashboard cargue correctamente para el rol ${rol}`, async ({ page }) => {
-                const dashboardPage = new DashboardPage(page);
-
-                await dashboardPage.navegar();
-                await expect(dashboardPage.welcomeMessage).toContainText(`Bienvenido, ${expectedName}`);
-            });
-        });
-    }
-
-    test.describe("Validación general del dashboard", () => {
+    test.describe("Rol: admin", () => {
         test.use({ storageState: "tests/e2e/auth/adminAuth.json" });
 
         test("Validar que el dashboard cargue correctamente", async ({ page }) => {
@@ -30,6 +10,71 @@ test.describe("Dashboard Page", () => {
 
             await dashboardPage.navegar();
             await dashboardPage.validarBienvenida("Bienvenido, Ana Administradora");
+            await dashboardPage.validarEncabezadoSuperior("Ana Administradora");
+            await dashboardPage.validarNavegacionLateral(true);
+
+            for (const elemento of dashboardPage.getDatosMetricas()) {
+                await expect(elemento).toBeVisible();
+            }
+
+            for (const elemento of dashboardPage.getGraficos()) {
+                await expect(elemento).toBeVisible();
+            }
+        });
+    });
+
+    test.describe("Rol: supervisor", () => {
+        test.use({ storageState: "tests/e2e/auth/supervisorAuth.json" });
+
+        test("Validar que el dashboard cargue correctamente", async ({ page }) => {
+            const dashboardPage = new DashboardPage(page);
+
+            await dashboardPage.navegar();
+            await dashboardPage.validarBienvenida("Bienvenido, Carlos Gerente");
+            await dashboardPage.validarEncabezadoSuperior("Carlos Gerente");
+            await dashboardPage.validarNavegacionLateral(true);
+
+            for (const elemento of dashboardPage.getDatosMetricas()) {
+                await expect(elemento).toBeVisible();
+            }
+
+            for (const elemento of dashboardPage.getGraficos()) {
+                await expect(elemento).toBeVisible();
+            }
+        });
+    });
+
+    test.describe("Rol: jefe", () => {
+        test.use({ storageState: "tests/e2e/auth/jefeAuth.json" });
+
+        test("Validar que el dashboard cargue correctamente", async ({ page }) => {
+            const dashboardPage = new DashboardPage(page);
+
+            await dashboardPage.navegar();
+            await dashboardPage.validarBienvenida("Bienvenido, María Líder");
+            await dashboardPage.validarEncabezadoSuperior("María Líder");
+            await dashboardPage.validarNavegacionLateral(false);
+
+            for (const elemento of dashboardPage.getDatosMetricas()) {
+                await expect(elemento).toBeVisible();
+            }
+
+            for (const elemento of dashboardPage.getGraficos()) {
+                await expect(elemento).toBeVisible();
+            }
+        });
+    });
+
+    test.describe("Rol: empleado", () => {
+        test.use({ storageState: "tests/e2e/auth/empleadoAuth.json" });
+
+        test("Validar que el dashboard cargue correctamente", async ({ page }) => {
+            const dashboardPage = new DashboardPage(page);
+
+            await dashboardPage.navegar();
+            await dashboardPage.validarBienvenida("Bienvenido, Juan Pérez");
+            await dashboardPage.validarEncabezadoSuperior("Juan Pérez");
+            await dashboardPage.validarNavegacionLateral(false);
 
             for (const elemento of dashboardPage.getDatosMetricas()) {
                 await expect(elemento).toBeVisible();

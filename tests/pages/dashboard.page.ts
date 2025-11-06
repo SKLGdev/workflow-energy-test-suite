@@ -5,7 +5,6 @@ export class DashboardPage {
 
     // Encabezado y navegación
     readonly appTitle: Locator;
-    readonly userName: Locator;
     readonly dashboardMenu: Locator;
     readonly ordersMenu: Locator;
     readonly equiposMenu: Locator;
@@ -33,14 +32,17 @@ export class DashboardPage {
     constructor(page: Page) {
         this.page = page;
 
-        // Header y barra lateral
-        this.appTitle = page.getByText("Work Order Management System");
-        this.userName = page.getByText("Ana Administradora");
-        this.dashboardMenu = page.getByRole("button", { name: "Dashboard" });
-        this.ordersMenu = page.getByRole("button", { name: "Órdenes" });
-        this.equiposMenu = page.getByRole("button", { name: "Equipos" });
-        this.reportesMenu = page.getByRole("button", { name: "Reportes" });
-        this.configuracionMenu = page.getByRole("button", { name: "Configuración" });
+        // Header
+        const header = page.locator("header");
+        this.appTitle = header.locator("div.MuiTypography-h6").filter({ hasText: "Work Order Management System" });
+
+        // Navegación lateral
+        const nav = page.locator("nav");
+        this.dashboardMenu = nav.getByRole("button", { name: "Dashboard" });
+        this.ordersMenu = nav.getByRole("button", { name: "Órdenes" });
+        this.equiposMenu = nav.getByRole("button", { name: "Equipos" });
+        this.reportesMenu = nav.getByRole("button", { name: "Reportes" });
+        this.configuracionMenu = nav.getByRole("button", { name: "Configuración" });
 
         // Contenido
         this.titleDashboard = page.getByRole("heading", { name: "Dashboard de Métricas" });
@@ -84,6 +86,25 @@ export class DashboardPage {
 
     async validarBienvenida(nombre: string) {
         await expect(this.welcomeMessage).toContainText(nombre);
+    }
+
+    getNombreUsuario(nombreUsuario: string) {
+        return this.page.locator("header").getByText(nombreUsuario, { exact: true });
+    }
+
+    async validarNavegacionLateral(incluirConfiguracion: boolean = true) {
+        await expect(this.dashboardMenu).toBeVisible();
+        await expect(this.ordersMenu).toBeVisible();
+        await expect(this.equiposMenu).toBeVisible();
+        await expect(this.reportesMenu).toBeVisible();
+        if (incluirConfiguracion) {
+            await expect(this.configuracionMenu).toBeVisible();
+        }
+    }
+
+    async validarEncabezadoSuperior(nombreUsuario: string) {
+        await expect(this.appTitle).toBeVisible();
+        await expect(this.getNombreUsuario(nombreUsuario)).toBeVisible();
     }
 
     getGraficos() {

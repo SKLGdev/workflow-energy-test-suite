@@ -17,8 +17,8 @@ export default defineConfig({
     reporter: [["html"], ["line"]],
 
     // Se ejecutan automáticamente antes y después de la suite
-    globalSetup: "./tests/e2e/utils/global-setup.ts",
-    globalTeardown: "./tests/e2e/utils/global-teardown.ts",
+    globalSetup: "./tests/e2e/utils/globalSetup.ts",
+    globalTeardown: "./tests/e2e/utils/globalTeardown.ts",
 
     use: {
         baseURL: process.env.BASE_URL || "http://localhost:3000",
