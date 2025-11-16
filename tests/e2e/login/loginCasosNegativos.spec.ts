@@ -6,7 +6,7 @@ test.describe("Casos negativos - Login de WorkFlow Energy", () => {
 
     test("No debería permitir iniciar sesión con campos vacíos", async ({ page }) => {
         const login = new PaginaLogin(page);
-        await login.ir();
+        await login.navegar();
 
         await login.iniciarSesion();
 
@@ -24,7 +24,7 @@ test.describe("Casos negativos - Login de WorkFlow Energy", () => {
 
     test("No debería permitir iniciar sesión con correo inválido", async ({ page }) => {
         const login = new PaginaLogin(page);
-        await login.ir();
+        await login.navegar();
 
         await login.completarFormulario("correoInvalido", "12345678");
         await login.iniciarSesion();
@@ -36,7 +36,7 @@ test.describe("Casos negativos - Login de WorkFlow Energy", () => {
 
     test("No debería permitir iniciar sesión con contraseña vacía", async ({ page }) => {
         const login = new PaginaLogin(page);
-        await login.ir();
+        await login.navegar();
 
         await login.completarFormulario("pepe@gmail.com", "");
         await login.iniciarSesion();
@@ -45,27 +45,56 @@ test.describe("Casos negativos - Login de WorkFlow Energy", () => {
 
         const contrasenaInput = login.inputContrasena;
         const contrasenaEsValida = await contrasenaInput.evaluate((el: HTMLInputElement) => el.validity.valid);
-        
+
         expect(contrasenaEsValida).toBeFalsy();
     });
 
     test("No debería permitir iniciar sesión con credenciales incorrectas", async ({ page }) => {
         const login = new PaginaLogin(page);
-        await login.ir();
+        await login.navegar();
+
+        // Esperar la respuesta de la API antes de hacer clic
+        const responsePromise = page.waitForResponse(
+            (response) => response.url().includes("/login") && response.request().method() === "POST"
+        );
 
         await login.completarFormulario("usuario@noexiste.com", "claveIncorrecta");
         await login.iniciarSesion();
 
-        await login.esperarMensajeError("Request failed with status code 401");
+        // Esperar y validar la respuesta de la API
+        const response = await responsePromise;
+        expect(response.status()).toBe(401); // Unauthorized
+
+        // También validar el cuerpo de la respuesta si es necesario
+        const responseBody = await response.json();
+        expect(responseBody).toHaveProperty("message");
+        expect(responseBody.message).toMatch(/Credenciales (inválidas|incorrectas)/i);
+
+        // Validar el mensaje en la UI
+        await login.esperarMensajeError("Credenciales incorrectas. Verifica tu correo y contraseña.");
     });
 
     test("Debería mostrar error al intentar login con email válido pero contraseña muy corta", async ({ page }) => {
         const login = new PaginaLogin(page);
-        await login.ir();
+        await login.navegar();
+
+        // Esperar la respuesta de la API antes de hacer clic
+        const responsePromise = page.waitForResponse(
+            (response) => response.url().includes("/login") && response.request().method() === "POST"
+        );
 
         await login.completarFormulario("pepe@gmail.com", "12");
         await login.iniciarSesion();
 
-        await login.esperarMensajeError("Request failed with status code 401");
+        // Esperar y validar la respuesta de la API
+        const response = await responsePromise;
+        expect(response.status()).toBe(401); // Unauthorized
+
+        // También validar el cuerpo de la respuesta si es necesario
+        const responseBody = await response.json();
+        expect(responseBody).toHaveProperty("message");
+        expect(responseBody.message).toMatch(/Credenciales (inválidas|incorrectas)/i);
+
+        await login.esperarMensajeError("Credenciales incorrectas. Verifica tu correo y contraseña.");
     });
 });

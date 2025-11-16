@@ -15,7 +15,7 @@ test.describe("Login de usuarios válidos", () => {
         test(`Debería permitir iniciar sesión con credenciales válidas como ${usuario.rol}`, async ({ page }) => {
             const loginPage = new PaginaLogin(page);
 
-            await loginPage.ir();
+            await loginPage.navegar();
             await loginPage.completarFormulario(String(usuario.email), String(usuario.password));
             await loginPage.iniciarSesion();
 

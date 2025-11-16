@@ -26,9 +26,13 @@ export default defineConfig({
         screenshot: "only-on-failure",
         video: "retain-on-failure",
         trace: "on-first-retry",
+        ...devices["Desktop Chrome"],
+        storageState: path.join(__dirname, "tests/e2e/auth/adminAuth.json"),
     },
 
-    // Cada proyecto se ejecuta autenticado con un rol distinto
+    // Proyectos disponibles para ejecutar tests con diferentes roles
+    // Por defecto se usa Admin (definido en 'use' arriba)
+    // Para ejecutar con otro rol: npx playwright test --project=Supervisor
     projects: [
         {
             name: "Admin",

@@ -7,11 +7,11 @@ export class PaginaWorkOrders {
     readonly dashboardMenu: Locator;
     readonly ordenesMenu: Locator;
     readonly equiposMenu: Locator;
-    readonly reportesMenu: Locator;
-    readonly configuracionMenu: Locator;
+    readonly auditoriaMenu: Locator;
 
     // ====== 👤 Encabezado superior ======
     readonly appTitle: Locator;
+    readonly tituloSeccion: Locator;
     readonly botonNuevaOrden: Locator;
 
     // ====== 📋 Encabezado de la sección ======
@@ -49,27 +49,32 @@ export class PaginaWorkOrders {
         this.dashboardMenu = nav.getByRole("button", { name: "Dashboard" });
         this.ordenesMenu = nav.getByRole("button", { name: "Órdenes" });
         this.equiposMenu = nav.getByRole("button", { name: "Equipos" });
-        this.reportesMenu = nav.getByRole("button", { name: "Reportes" });
-        this.configuracionMenu = nav.getByRole("button", { name: "Configuración" });
+        this.auditoriaMenu = nav.getByRole("button", { name: "Auditoría" });
 
         // ====== Header ======
         const header = page.locator("header");
         this.appTitle = header.locator("div.MuiTypography-h6").filter({ hasText: "Work Order Management System" });
-        this.botonNuevaOrden = page.getByRole("button", { name: "Nueva Orden" });
 
-        // ====== Sección principal ======
-        this.totalCard = page.locator("div.MuiCardContent-root").filter({ hasText: "Total" });
-        this.pendientesCard = page.locator("div.MuiCardContent-root").filter({ hasText: "Pendientes" });
-        this.enProgresoCard = page.locator("div.MuiCardContent-root").filter({ hasText: "En Progreso" });
-        this.completadasCard = page.locator("div.MuiCardContent-root").filter({ hasText: "Completadas" });
+        // ====== Contenido principal ======
+        const main = page.locator("main");
+        
+        // Título de la sección y botón Nueva Orden
+        this.tituloSeccion = main.locator("h4.MuiTypography-h4").filter({ hasText: "Gestión de Órdenes" });
+        this.botonNuevaOrden = main.getByRole("button", { name: "Nueva Orden" });
+
+        // Cards de métricas - cada card tiene un p con el título y un h4 con el valor
+        this.totalCard = main.locator("p.MuiTypography-body1").filter({ hasText: "Total" });
+        this.pendientesCard = main.locator("p.MuiTypography-body1").filter({ hasText: "Pendientes" });
+        this.enProgresoCard = main.locator("p.MuiTypography-body1").filter({ hasText: "En Progreso" });
+        this.completadasCard = main.locator("p.MuiTypography-body1").filter({ hasText: "Completadas" });
 
         // ====== Filtros ======
-        this.buscadorOrdenes = page.getByPlaceholder("Buscar órdenes...");
-        this.filtroEstado = page.locator("div.MuiFormControl-root").filter({ hasText: "Estado" }).getByRole("combobox");
-        this.filtroPrioridad = page.locator("div.MuiFormControl-root").filter({ hasText: "Prioridad" }).getByRole("combobox");
+        this.buscadorOrdenes = main.getByPlaceholder("Buscar órdenes...");
+        this.filtroEstado = main.locator("label").filter({ hasText: "Estado" }).locator("xpath=ancestor::div[contains(@class, 'MuiFormControl-root')]//div[@role='combobox']");
+        this.filtroPrioridad = main.locator("label").filter({ hasText: "Prioridad" }).locator("xpath=ancestor::div[contains(@class, 'MuiFormControl-root')]//div[@role='combobox']");
 
         // ====== Tabla de datos ======
-        this.tablaOrdenes = page.locator("table.MuiTable-root");
+        this.tablaOrdenes = main.locator("table.MuiTable-root");
         const thead = this.tablaOrdenes.locator("thead.MuiTableHead-root");
 
         this.columnasEncabezado = {
@@ -84,7 +89,7 @@ export class PaginaWorkOrders {
         };
 
         this.filasOrden = this.tablaOrdenes.locator("tbody.MuiTableBody-root tr");
-        this.paginacion = page.locator("p.MuiTablePagination-selectLabel").filter({ hasText: "Rows per page:" });
+        this.paginacion = main.locator("p.MuiTablePagination-selectLabel").filter({ hasText: "Rows per page:" });
     }
 
     // ====== 🌐 Navegación ======
@@ -92,14 +97,10 @@ export class PaginaWorkOrders {
         await this.page.goto("/work-orders");
     }
 
-    getTituloSeccion(tituloSeccion: string) {
-        return this.page.getByRole("heading", { name: tituloSeccion });
-    }
-
     // ====== ✅ Validaciones ======
-    async validarCargaCorrecta(tituloSeccion: string) {
+    async validarCargaCorrecta() {
         await expect(this.appTitle).toBeVisible();
-        await expect(this.getTituloSeccion(tituloSeccion)).toBeVisible();
+        await expect(this.tituloSeccion).toBeVisible();
         await expect(this.tablaOrdenes).toBeVisible();
     }
 
@@ -108,16 +109,6 @@ export class PaginaWorkOrders {
         await expect(this.pendientesCard).toBeVisible();
         await expect(this.enProgresoCard).toBeVisible();
         await expect(this.completadasCard).toBeVisible();
-    }
-
-    async validarNavegacionLateral(incluirConfiguracion: boolean = true) {
-        await expect(this.dashboardMenu).toBeVisible();
-        await expect(this.ordenesMenu).toBeVisible();
-        await expect(this.equiposMenu).toBeVisible();
-        await expect(this.reportesMenu).toBeVisible();
-        if (incluirConfiguracion) {
-            await expect(this.configuracionMenu).toBeVisible();
-        }
     }
 
     getNombreUsuario(nombreUsuario: string) {
@@ -135,14 +126,12 @@ export class PaginaWorkOrders {
         await expect(this.filtroPrioridad).toBeVisible();
     }
 
-    async validarColumnasTabla(incluirAsignadoA: boolean = true) {
+    async validarColumnasTabla() {
         await expect(this.columnasEncabezado.id).toBeVisible();
         await expect(this.columnasEncabezado.titulo).toBeVisible();
         await expect(this.columnasEncabezado.estado).toBeVisible();
         await expect(this.columnasEncabezado.prioridad).toBeVisible();
-        if (incluirAsignadoA) {
-            await expect(this.columnasEncabezado.asignadoA).toBeVisible();
-        }
+        await expect(this.columnasEncabezado.asignadoA).toBeVisible();
         await expect(this.columnasEncabezado.fechaCreacion).toBeVisible();
         await expect(this.columnasEncabezado.fechaLimite).toBeVisible();
         await expect(this.columnasEncabezado.acciones).toBeVisible();

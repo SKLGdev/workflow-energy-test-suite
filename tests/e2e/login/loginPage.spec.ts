@@ -7,7 +7,7 @@ test.describe("Página de Login", () => {
     test("Verificar que los elementos de la página de login estén visibles", async ({ page }) => {
         const loginPage = new PaginaLogin(page);
 
-        await loginPage.ir();
+        await loginPage.navegar();
         for (const elemento of loginPage.getElementosPrincipales()) {
             await expect(elemento).toBeVisible();
         }

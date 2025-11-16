@@ -36,7 +36,7 @@ export class PaginaLogin {
     /**
      * Navega a la página de login
      */
-    async ir() {
+    async navegar() {
         await this.page.goto("/login");
     }
 

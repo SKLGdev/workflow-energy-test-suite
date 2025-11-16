@@ -8,13 +8,14 @@ export class DashboardPage {
     readonly dashboardMenu: Locator;
     readonly ordersMenu: Locator;
     readonly equiposMenu: Locator;
-    readonly reportesMenu: Locator;
-    readonly configuracionMenu: Locator;
+    readonly auditoriaMenu: Locator;
 
     // Contenido principal
     readonly titleDashboard: Locator;
     readonly welcomeMessage: Locator;
     readonly periodoSelect: Locator;
+    readonly botonExportarPDF: Locator;
+    readonly botonExportarExcel: Locator;
 
     // Métricas
     readonly totalOrdenesCard: Locator;
@@ -41,26 +42,28 @@ export class DashboardPage {
         this.dashboardMenu = nav.getByRole("button", { name: "Dashboard" });
         this.ordersMenu = nav.getByRole("button", { name: "Órdenes" });
         this.equiposMenu = nav.getByRole("button", { name: "Equipos" });
-        this.reportesMenu = nav.getByRole("button", { name: "Reportes" });
-        this.configuracionMenu = nav.getByRole("button", { name: "Configuración" });
+        this.auditoriaMenu = nav.getByRole("button", { name: "Auditoría" });
 
-        // Contenido
-        this.titleDashboard = page.getByRole("heading", { name: "Dashboard de Métricas" });
-        this.welcomeMessage = page.getByText(/Bienvenido, .+/);
-        this.periodoSelect = page.getByRole("combobox", { name: "Período" });
+        // Contenido principal
+        const main = page.locator("main");
+        this.titleDashboard = main.locator("h4.MuiTypography-h4").filter({ hasText: "Dashboard de Métricas" });
+        this.welcomeMessage = main.locator("p.MuiTypography-body2").filter({ hasText: /Bienvenido, .+/ });
+        this.periodoSelect = main.getByRole("combobox", { name: "Período" });
+        this.botonExportarPDF = main.getByRole("button", { name: "Exportar PDF" });
+        this.botonExportarExcel = main.getByRole("button", { name: "Exportar Excel" });
 
-        // Cards
-        this.totalOrdenesCard = page.getByText("Total de Órdenes");
-        this.completadasCard = page.getByText("Completadas");
-        this.enProgresoCard = page.getByText("En Progreso");
-        this.pendientesCard = page.getByText("Pendientes");
-        this.atrasadasCard = page.getByText("Atrasadas");
-        this.tiempoPromedioCard = page.getByText("Tiempo Promedio");
+        // Cards de métricas - cada card tiene un p con el título y un div con el valor
+        this.totalOrdenesCard = main.locator("p.MuiTypography-body2").filter({ hasText: "Total de Órdenes" });
+        this.completadasCard = main.locator("p.MuiTypography-body2").filter({ hasText: "Completadas" });
+        this.enProgresoCard = main.locator("p.MuiTypography-body2").filter({ hasText: "En Progreso" });
+        this.pendientesCard = main.locator("p.MuiTypography-body2").filter({ hasText: "Pendientes" });
+        this.atrasadasCard = main.locator("p.MuiTypography-body2").filter({ hasText: "Atrasadas" });
+        this.tiempoPromedioCard = main.locator("p.MuiTypography-body2").filter({ hasText: "Tiempo Promedio" });
 
-        // Gráficos
-        this.tendenciaOrdenesChart = page.getByRole("img", { name: /Tendencia de Órdenes/i });
-        this.distribucionEstadoChart = page.getByRole("img", { name: /Distribución por Estado/i });
-        this.distribucionPrioridadChart = page.getByRole("img", { name: /Distribución por Prioridad/i });
+        // Gráficos - canvas dentro de divs con clase css-vycneo
+        this.tendenciaOrdenesChart = main.locator('h6:has-text("Tendencia de Órdenes")').locator('xpath=ancestor::div[contains(@class, "MuiPaper-root")]//canvas[@role="img"]');
+        this.distribucionEstadoChart = main.locator('h6:has-text("Distribución por Estado")').locator('xpath=ancestor::div[contains(@class, "MuiPaper-root")]//canvas[@role="img"]');
+        this.distribucionPrioridadChart = main.locator('h6:has-text("Distribución por Prioridad")').locator('xpath=ancestor::div[contains(@class, "MuiPaper-root")]//canvas[@role="img"]');
     }
 
     async navegar() {
@@ -92,16 +95,6 @@ export class DashboardPage {
         return this.page.locator("header").getByText(nombreUsuario, { exact: true });
     }
 
-    async validarNavegacionLateral(incluirConfiguracion: boolean = true) {
-        await expect(this.dashboardMenu).toBeVisible();
-        await expect(this.ordersMenu).toBeVisible();
-        await expect(this.equiposMenu).toBeVisible();
-        await expect(this.reportesMenu).toBeVisible();
-        if (incluirConfiguracion) {
-            await expect(this.configuracionMenu).toBeVisible();
-        }
-    }
-
     async validarEncabezadoSuperior(nombreUsuario: string) {
         await expect(this.appTitle).toBeVisible();
         await expect(this.getNombreUsuario(nombreUsuario)).toBeVisible();
@@ -111,9 +104,9 @@ export class DashboardPage {
         // Los gráficos son renderizados como canvas con role="img"
         // Están dentro del mismo contenedor MuiPaper-root que el h6 con el título
         return [
-            this.page.locator('h6:has-text("Tendencia de Órdenes")').locator('xpath=ancestor::div[contains(@class, "MuiPaper-root")]//canvas[@role="img"]'),
-            this.page.locator('h6:has-text("Distribución por Estado")').locator('xpath=ancestor::div[contains(@class, "MuiPaper-root")]//canvas[@role="img"]'),
-            this.page.locator('h6:has-text("Distribución por Prioridad")').locator('xpath=ancestor::div[contains(@class, "MuiPaper-root")]//canvas[@role="img"]'),
+            this.tendenciaOrdenesChart,
+            this.distribucionEstadoChart,
+            this.distribucionPrioridadChart,
         ];
     }
 }
