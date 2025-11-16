@@ -20,8 +20,11 @@
         "open:report": "npx playwright show-report",
         "generate:report": "npx playwright test && npx playwright show-report",
         "lint": "eslint tests/**/*.ts --fix",
-        "globalSetup": "./tests/e2e/utils/global-setup.ts",
-        "globalTeardown": "./tests/e2e/utils/global-teardown.ts"
+        "globalSetup": "./tests/utils/globalSetup.ts",
+        "globalTeardown": "./tests/utils/globalTeardown.ts",
+        "load:test": "locust -f tests/load/locustfile.py --config=.locust.conf",
+        "load:test:headless": "locust -f tests/load/locustfile.py --config=.locust.conf --headless --html=reports/locust-report.html",
+        "load:test:unauthenticated": "locust -f tests/load/locustfile.py --config=.locust.conf --tags UnauthenticatedUser"
     },
     "keywords": [],
     "author": "",

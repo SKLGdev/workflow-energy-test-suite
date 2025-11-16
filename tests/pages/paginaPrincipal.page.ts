@@ -34,7 +34,7 @@ export class PaginaPrincipal {
     /**
      * Navega a la página principal
      */
-    async ir() {
+    async navegar() {
         await this.page.goto("/");
     }
 

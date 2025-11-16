@@ -11,3 +11,7 @@ ESTRUCTURA.md
 
 # Auth
 tests/e2e/auth/*
+
+# Locust - Reportes de carga
+/reports/
+*.html

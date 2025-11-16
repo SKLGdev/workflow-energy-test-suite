@@ -11,6 +11,17 @@ export class TeamsPage {
     readonly gridEquipos: Locator;
     readonly cardsEquipos: Locator;
 
+    // Modal de crear equipo
+    readonly modalCrearEquipo: Locator;
+    readonly tituloModal: Locator;
+    readonly inputNombreEquipo: Locator;
+    readonly textareaDescripcion: Locator;
+    readonly inputIdPlanta: Locator;
+    readonly helperTextIdPlanta: Locator;
+    readonly selectLiderEquipo: Locator;
+    readonly botonCancelar: Locator;
+    readonly botonCrear: Locator;
+
     constructor(page: Page) {
         this.page = page;
 
@@ -24,6 +35,17 @@ export class TeamsPage {
         // Grid de equipos
         this.gridEquipos = main.locator("div.MuiGrid-container");
         this.cardsEquipos = main.locator("div.MuiCard-root");
+
+        // Modal de crear equipo
+        this.modalCrearEquipo = page.locator("div.MuiDialog-paper");
+        this.tituloModal = this.modalCrearEquipo.locator("h2.MuiDialogTitle-root").filter({ hasText: "Crear Nuevo Equipo" });
+        this.inputNombreEquipo = this.modalCrearEquipo.getByLabel("Nombre del Equipo *");
+        this.textareaDescripcion = this.modalCrearEquipo.getByLabel("Descripción");
+        this.inputIdPlanta = this.modalCrearEquipo.getByLabel("ID de Planta (opcional)");
+        this.helperTextIdPlanta = this.modalCrearEquipo.locator("p.MuiFormHelperText-root").filter({ hasText: "Deja en blanco si no tienes plantas configuradas" });
+        this.selectLiderEquipo = this.modalCrearEquipo.locator("label").filter({ hasText: "Líder del Equipo (opcional)" }).locator("xpath=ancestor::div[contains(@class, 'MuiFormControl-root')]//div[@role='combobox']");
+        this.botonCancelar = this.modalCrearEquipo.getByRole("button", { name: "Cancelar" });
+        this.botonCrear = this.modalCrearEquipo.getByRole("button", { name: "Crear" });
     }
 
     /**
@@ -173,6 +195,122 @@ export class TeamsPage {
         }
         
         return titulos;
+    }
+
+    // ====== Modal de Crear Equipo ======
+
+    /**
+     * Valida que el modal de crear equipo esté visible
+     */
+    async validarModalCrearEquipoVisible() {
+        await expect(this.modalCrearEquipo).toBeVisible();
+        await expect(this.tituloModal).toBeVisible();
+    }
+
+    /**
+     * Valida que todos los campos del modal estén visibles
+     */
+    async validarCamposModalCrearEquipo() {
+        await expect(this.inputNombreEquipo).toBeVisible();
+        await expect(this.textareaDescripcion).toBeVisible();
+        await expect(this.inputIdPlanta).toBeVisible();
+        await expect(this.selectLiderEquipo).toBeVisible();
+        await expect(this.botonCancelar).toBeVisible();
+        await expect(this.botonCrear).toBeVisible();
+    }
+
+    /**
+     * Completa el campo Nombre del Equipo
+     */
+    async completarNombreEquipo(nombre: string) {
+        await this.inputNombreEquipo.fill(nombre);
+    }
+
+    /**
+     * Completa el campo Descripción
+     */
+    async completarDescripcion(descripcion: string) {
+        await this.textareaDescripcion.fill(descripcion);
+    }
+
+    /**
+     * Completa el campo ID de Planta
+     */
+    async completarIdPlanta(idPlanta: string | number) {
+        await this.inputIdPlanta.fill(String(idPlanta));
+    }
+
+    /**
+     * Selecciona un líder del equipo
+     */
+    async seleccionarLiderEquipo(nombreLider: string) {
+        await this.selectLiderEquipo.click();
+        await this.page.getByRole("option", { name: nombreLider }).click();
+    }
+
+    /**
+     * Completa todo el formulario de crear equipo
+     */
+    async completarFormularioCrearEquipo(datos: {
+        nombre: string;
+        descripcion?: string;
+        idPlanta?: string | number;
+        liderEquipo?: string;
+    }) {
+        await this.completarNombreEquipo(datos.nombre);
+
+        if (datos.descripcion) {
+            await this.completarDescripcion(datos.descripcion);
+        }
+
+        if (datos.idPlanta !== undefined) {
+            await this.completarIdPlanta(datos.idPlanta);
+        }
+
+        if (datos.liderEquipo) {
+            await this.seleccionarLiderEquipo(datos.liderEquipo);
+        }
+    }
+
+    /**
+     * Hace clic en el botón Cancelar del modal
+     */
+    async cancelarCreacionEquipo() {
+        await this.botonCancelar.click();
+    }
+
+    /**
+     * Hace clic en el botón Crear del modal
+     */
+    async confirmarCreacionEquipo() {
+        await this.botonCrear.click();
+    }
+
+    /**
+     * Crea un equipo completo: abre el modal, completa el formulario y confirma
+     */
+    async crearEquipo(datos: {
+        nombre: string;
+        descripcion?: string;
+        idPlanta?: string | number;
+        liderEquipo?: string;
+    }) {
+        await this.clickCrearEquipo();
+        await this.validarModalCrearEquipoVisible();
+        await this.completarFormularioCrearEquipo(datos);
+        await this.confirmarCreacionEquipo();
+    }
+
+    /**
+     * Valida que el campo Nombre del Equipo sea requerido
+     */
+    async validarNombreEquipoRequerido() {
+        const label = this.modalCrearEquipo.getByLabel("Nombre del Equipo *");
+        await expect(label).toBeVisible();
+
+        // Verificar que el input tenga el atributo required
+        const esRequerido = await this.inputNombreEquipo.getAttribute("required");
+        expect(esRequerido).not.toBeNull();
     }
 }
 

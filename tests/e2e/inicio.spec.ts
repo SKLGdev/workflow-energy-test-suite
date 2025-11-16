@@ -7,7 +7,7 @@ test.describe("Pagina Principal", () => {
     test("Verificar que los elementos de la página principal estén visibles", async ({ page }) => {
         const principalPage = new PaginaPrincipal(page);
 
-        await principalPage.ir();
+        await principalPage.navegar();
         for (const elemento of principalPage.getElementosPrincipales()) {
             await expect(elemento).toBeVisible();
         }

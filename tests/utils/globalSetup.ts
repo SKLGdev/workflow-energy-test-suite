@@ -73,7 +73,7 @@ export default async function globalSetup(config: FullConfig) {
         await page.goto(baseURL);
         await page.evaluate((t) => localStorage.setItem("accessToken", t), token);
 
-        const storagePath = path.join(__dirname, "..", "auth", usuario.archivo);
+        const storagePath = path.join(__dirname, "..", "e2e", "auth", usuario.archivo);
         await fs.mkdir(path.dirname(storagePath), { recursive: true });
         await context.storageState({ path: storagePath });
         await context.close();
@@ -82,7 +82,7 @@ export default async function globalSetup(config: FullConfig) {
     }
 
     // Crear un estado sin autenticación
-    const noAuthPath = path.join(__dirname, "..", "auth", "noAuth.json");
+    const noAuthPath = path.join(__dirname, "..", "e2e", "auth", "noAuth.json");
     await fs.writeFile(noAuthPath, JSON.stringify({ cookies: [], origins: [] }, null, 2));
     console.log("📄 noAuth.json generado correctamente");
 

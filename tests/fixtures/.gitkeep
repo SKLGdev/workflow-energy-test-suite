@@ -1,3 +1,1 @@
-# Este directorio está preparado para fixtures personalizados
-# Cuando se necesiten, crear archivos *.ts aquí
-
+# Esta carpeta está reservada para fixtures personalizados de Playwright

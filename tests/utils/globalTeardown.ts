@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default async function globalTeardown() {
-    const authDir = path.join(__dirname, "..", "auth");
+    const authDir = path.join(__dirname, "..", "e2e", "auth");
 
     try {
         const archivos = await fs.readdir(authDir);
