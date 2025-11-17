@@ -104,7 +104,7 @@ export const test = base.extend<ApiFixtures>({
         const data = {
             workOrder: {
                 title: `Orden de Prueba ${generarStringAleatorio(8)}`,
-                description: `Descripción de prueba generada automáticamente`,
+                description: `Descripción de prueba generada automáticamente ${generarStringAleatorio(6)}`,
                 priority: "medium", // Valores comunes: low, medium, high
                 estimated_hours: 4,
                 location: `Ubicación ${generarStringAleatorio(10)}`,
@@ -112,7 +112,7 @@ export const test = base.extend<ApiFixtures>({
             },
             team: {
                 name: `Equipo ${generarStringAleatorio(8)}`,
-                description: `Descripción del equipo de prueba`,
+                description: `Descripción del equipo de prueba ${generarStringAleatorio(6)}`,
                 // plant_id y leader_id son opcionales, no los incluimos por defecto
             },
         };

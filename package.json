@@ -22,9 +22,9 @@
         "lint": "eslint tests/**/*.ts --fix",
         "globalSetup": "./tests/utils/globalSetup.ts",
         "globalTeardown": "./tests/utils/globalTeardown.ts",
-        "load:test": "locust -f tests/load/locustfile.py --config=.locust.conf",
-        "load:test:headless": "locust -f tests/load/locustfile.py --config=.locust.conf --headless --html=reports/locust-report.html",
-        "load:test:unauthenticated": "locust -f tests/load/locustfile.py --config=.locust.conf --tags UnauthenticatedUser"
+        "load:test": "py -m locust -f tests/load/locustfile.py --config=.locust.conf",
+        "load:test:headless": "py -m locust -f tests/load/locustfile.py --config=.locust.conf --headless --html=reports/locust-report.html",
+        "load:test:unauthenticated": "py -m locust -f tests/load/locustfile.py --config=.locust.conf --tags UnauthenticatedUser"
     },
     "keywords": [],
     "author": "",

@@ -5,6 +5,7 @@
 import { test, expect } from "../helpers/apiFixtures.js";
 import { API_ENDPOINTS } from "../helpers/apiEndpoints.js";
 import { expectStatus, expectSuccess, expectListResponse, expectObjectResponse } from "../helpers/responseValidators.js";
+import { generarStringAleatorio } from "../../utils/helpers.js";
 
 test.describe("API - Work Orders", () => {
     test.describe("GET /work-orders", () => {
@@ -139,8 +140,8 @@ test.describe("API - Work Orders", () => {
             const createResponse = await apiClient.post(
                 API_ENDPOINTS.WORK_ORDERS.BASE,
                 {
-                    title: `Test Order ${Date.now()}`,
-                    description: "Test description",
+                    title: `Test Order ${generarStringAleatorio(8)}`,
+                    description: `Test description ${generarStringAleatorio(6)}`,
                     priority: "medium",
                 },
                 { token: adminToken }

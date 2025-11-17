@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { TeamsPage } from "../../pages/teams.page.js";
+import { generarStringAleatorio } from "../../utils/helpers.js";
 
 test.describe("Crear Equipo", () => {
     test("Debería crear un equipo exitosamente", async ({ page }) => {
@@ -19,8 +20,8 @@ test.describe("Crear Equipo", () => {
 
         // Crear el equipo
         await teamsPage.crearEquipo({
-            nombre: `Equipo de Prueba E2E ${Date.now()}`,
-            descripcion: "Este es un equipo creado mediante pruebas automatizadas",
+            nombre: `Equipo de Prueba E2E ${generarStringAleatorio(8)}`,
+            descripcion: `Este es un equipo creado mediante pruebas automatizadas ${generarStringAleatorio(6)}`,
             idPlanta: 0,
         });
 
