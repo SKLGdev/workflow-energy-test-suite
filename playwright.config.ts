@@ -16,6 +16,14 @@ export default defineConfig({
     retries: 2,
     reporter: [["html"], ["line"]],
 
+    // Ejecutar tests en secuencia (uno por uno)
+    // workers: 1 = ejecución secuencial
+    // workers: undefined = usar todos los cores disponibles (paralelo)
+    workers: 1,
+    
+    // Desactivar paralelización completa (opcional, pero workers: 1 ya lo hace)
+    fullyParallel: false,
+
     // Se ejecutan automáticamente antes y después de la suite
     globalSetup: "./tests/utils/globalSetup.ts",
     globalTeardown: "./tests/utils/globalTeardown.ts",
